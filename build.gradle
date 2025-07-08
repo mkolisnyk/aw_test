@@ -1,0 +1,66 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+}
+
+plugins {
+    id 'java'
+    id 'jvm-test-suite'
+}
+
+group = 'com.github.mkolisnyk'
+version = '0.0.1'
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+        }
+        resources {
+            srcDir 'src/main/resources'
+        }
+    }
+    test {
+        java {
+            srcDir 'src/test/java'
+        }
+        resources {
+            srcDir 'src/test/resources'
+        }
+    }
+}
+
+configurations {
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.platform:junit-platform-suite:1.9.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.0'
+    testImplementation 'org.junit.platform:junit-platform-suite-engine:1.9.0'
+    testImplementation 'org.mockito:mockito-core:5.14.1'
+   	testImplementation 'io.appium:java-client:4.1.2'
+   	testImplementation 'info.cukes:cucumber-picocontainer:1.2.5'
+   	testImplementation 'info.cukes:cucumber-junit:1.2.5'
+   	testImplementation group: 'org.reflections', name: 'reflections', version: '0.9.9-RC1'
+}
+
+test {
+    useJUnitPlatform {
+        includeEngines "junit-jupiter"
+        excludeEngines "junit-vintage"
+        testClassesDirs = testing.suites.test.sources.output.classesDirs
+        classpath = testing.suites.test.sources.runtimeClasspath
+    }
+    testLogging {
+        events "PASSED", "FAILED", "SKIPPED"
+        showStandardStreams = true
+    }
+}
+
