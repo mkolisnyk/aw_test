@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -221,50 +221,7 @@ public final class SystemUtils {
         builder.redirectError(outputFile);
         Process p = builder.start();
         boolean status = p.waitFor(Configuration.timeout(), TimeUnit.SECONDS);
-        Assert.assertTrue("Process didn't finish during specified timeout", status);
-        Assert.assertEquals("Process ended with undexpected value", 0, p.exitValue());
-    }
-    public static List<String> getDisplayActivities() throws Exception {
-        String deviceId = Configuration.get("udid");
-
-        ProcessBuilder builder = null;
-        if (!StringUtils.isBlank(deviceId)) {
-            builder = new ProcessBuilder(getADBPath(), "-s",
-                    deviceId, "logcat", "-d");
-        } else {
-            builder = new ProcessBuilder(getADBPath(), "logcat", "-d");
-        }
-        File outputFile = File.createTempFile("display", "log");
-        outputFile.deleteOnExit();
-        builder.redirectOutput(outputFile );
-        builder.redirectError(outputFile);
-        Process p = builder.start();
-        boolean status = p.waitFor(Configuration.timeout(), TimeUnit.SECONDS);
-        Assert.assertTrue("Process didn't finish during specified timeout", status);
-        Assert.assertEquals("Process ended with undexpected value", 0, p.exitValue());
-        List<String> lines = FileUtils.readLines(outputFile);
-        for (int i = 0; i < lines.size(); i++) {
-            if (!lines.get(i).contains("ActivityManager: Displayed")) {
-                lines.remove(i);
-                i--;
-            }
-        }
-        return lines;
-    }
-    public static Process startProcessMetricsCommand(File outputFile) throws Exception {
-        String deviceId = Configuration.get("udid");
-        ProcessBuilder builder = null;
-        if (!StringUtils.isBlank(deviceId)) {
-            builder = new ProcessBuilder(getADBPath(), "-s",
-                    deviceId,
-                    "shell", "top", "-m", "10", "-d", "5 | grep " + Configuration.get("appPackage"));
-        } else {
-            builder = new ProcessBuilder(getADBPath(),
-                    "shell", "top", "-m", "10", "-d", "5 | grep " + Configuration.get("appPackage"));
-        }
-        builder.redirectOutput(outputFile);
-        builder.redirectError(outputFile);
-        Process p = builder.start();
-        return p;
+        Assertions.assertTrue(status, "Process didn't finish during specified timeout");
+        Assertions.assertEquals(0, p.exitValue(), "Process ended with undexpected value");
     }
 }

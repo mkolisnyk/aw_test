@@ -1,14 +1,13 @@
 package com.sample.framework.ui.controls;
 
-import io.appium.java_client.MobileElement;
-
-import java.awt.Rectangle;
+import java.time.Duration;
 import java.util.HashMap;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Point;
+import org.openqa.selenium.Rectangle;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -102,7 +101,7 @@ public class Control {
         return getDriver().findElements(locator).get(index);
     }
     public boolean waitUntil(ExpectedCondition<?> condition, long timeout) {
-        WebDriverWait wait = new WebDriverWait(getDriver(), timeout);
+        WebDriverWait wait = new WebDriverWait(getDriver(), Duration.ofSeconds(timeout));
         try {
             wait.until(condition);
         } catch (TimeoutException e) {
@@ -127,18 +126,20 @@ public class Control {
         return waitUntil(ExpectedConditions.visibilityOfElementLocated(locator), timeout);
     }
     public boolean visible() {
-        Assert.assertTrue(
-                "Unable to find element: " + this.locator.toString(),
-                exists());
+        Assertions.assertTrue(
+        		exists(),
+                "Unable to find element: " + this.locator.toString()
+                );
         return visible(TIMEOUT);
     }
     public boolean invisible(long timeout) {
         return waitUntil(ExpectedConditions.invisibilityOfElementLocated(locator), timeout);
     }
     public boolean invisible() {
-        Assert.assertTrue(
-                "Unable to find element: " + this.locator.toString(),
-                exists());
+        Assertions.assertTrue(
+        		exists(),
+                "Unable to find element: " + this.locator.toString()
+                );
         return invisible(TIMEOUT);
     }
     public boolean enabled(long timeout) {
@@ -154,22 +155,24 @@ public class Control {
         return enabled(TIMEOUT);
     }
     public void click() {
-        Assert.assertTrue(
-            "Unable to find element: " + this.locator.toString(),
-            exists());
+        Assertions.assertTrue(
+        		exists(),
+            "Unable to find element: " + this.locator.toString()
+            );
         this.element().click();
     }
     public <T extends Page> T click(Class<T> pageClass) throws Exception {
     	this.click();
     	T page = PageFactory.init(this.getDriver(), pageClass);
-    	Assert.assertTrue(String.format("The page of %s class didn't appear during specified timeout", pageClass.getName()),
-                page.isCurrent());
+    	Assertions.assertTrue(page.isCurrent(),
+    			String.format("The page of %s class didn't appear during specified timeout", pageClass.getName())
+                );
     	return page;
     }
     public String getText() {
-		Assert.assertTrue(
-				"Unable to find element with locator: " + this.getLocator(),
-				this.exists());
+		Assertions.assertTrue(this.exists(),
+				"Unable to find element with locator: " + this.getLocator()
+				);
 		return this.element().getText();
     }
     public String getValue() {
@@ -177,15 +180,14 @@ public class Control {
     }
     public Rectangle getRect() {
         this.exists();
-        Rectangle rect = new Rectangle();
-        Point location = ((MobileElement) this.element()).getCoordinates()
-                .onPage();
-        Dimension size = this.element().getSize();
-        rect.x = location.x;
-        rect.y = location.y;
-        rect.width = size.width;
-        rect.height = size.height;
-        return rect;
+//        Rectangle rect = new Rectangle();
+//        Point location = this.element().getLocation();
+//        Dimension size = this.element().getSize();
+//        rect.x = location.x;
+//        rect.y = location.y;
+//        rect.width = size.width;
+//        rect.height = size.height;
+        return this.element().getRect();
     }
     public void scrollTo() {
         if (this.getScrollTo() != null && !this.getScrollTo().trim().equals("")) {

@@ -2,7 +2,6 @@ package com.sample.framework.ui;
 
 import io.appium.java_client.AppiumDriver;
 
-import java.awt.Rectangle;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -13,6 +12,7 @@ import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
+import org.openqa.selenium.Rectangle;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.Augmenter;
@@ -99,9 +99,8 @@ public class Page {
         return text;
     }
     private static Rectangle getScreenSize() {
-        Rectangle area = new Rectangle();
         Dimension size = Driver.current().manage().window().getSize();
-        area.setBounds(0, 0, size.getWidth(), size.getHeight());
+        Rectangle area = new Rectangle(0, 0, size.getWidth(), size.getHeight());
         return area;
     }
     public boolean swipeScreen(boolean vertical, boolean leftTop, boolean once) {
@@ -112,12 +111,14 @@ public class Page {
         if (!scrollable.exists(SHORT_TIMEOUT)) {
             return false;
         }
-        Rectangle area = scrollable.getRect();
+        Rectangle elementArea = scrollable.getRect();
         Rectangle screenArea = Page.getScreenSize();
-        area.x = Math.max(area.x, screenArea.x);
-        area.y = Math.max(area.y, screenArea.y);
-        area.width = Math.min(area.width, screenArea.width - area.x);
-        area.height = Math.min(area.height, screenArea.height - area.y);
+        Rectangle area = new Rectangle(
+        	Math.max(elementArea.x, screenArea.x),
+        	Math.max(elementArea.y, screenArea.y),
+        	Math.min(elementArea.width, screenArea.width - elementArea.x),
+        	Math.min(elementArea.height, screenArea.height - elementArea.y)
+		);
 
         int startX = area.x + area.width / 2;
         int startY = 0;
@@ -149,8 +150,8 @@ public class Page {
         int times = 0;
         final int maxTries = 50;
         while (!currentState.equals(prevState)) {
-            ((AppiumDriver) this.getDriver()).swipe(startX, startY, endX, endY,
-                    seconds * 1000);
+//            ((AppiumDriver) this.getDriver()).swipe(startX, startY, endX, endY,
+//                    seconds * 1000);
             if (once || times > maxTries) {
                 break;
             }
@@ -214,7 +215,7 @@ public class Page {
     
     public void hideKeyboard() {
         try {
-            ((AppiumDriver) this.getDriver()).hideKeyboard();
+            // ((AppiumDriver) this.getDriver()).hideKeyboard();
         } catch (Exception e) {
         }
     }
