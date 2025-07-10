@@ -1,21 +1,33 @@
 package com.sample.framework.ui;
 
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.HidesKeyboard;
+import io.appium.java_client.PerformsTouchActions;
+import io.appium.java_client.TouchAction;
+import io.appium.java_client.touch.WaitOptions;
+import io.appium.java_client.touch.offset.PointOption;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.time.Duration;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
+import org.openqa.selenium.Point;
 import org.openqa.selenium.Rectangle;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.interactions.PointerInput;
+import org.openqa.selenium.interactions.Sequence;
 import org.openqa.selenium.remote.Augmenter;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.reflections.Reflections;
 
 import com.sample.framework.Configuration;
@@ -24,7 +36,7 @@ import com.sample.framework.ui.controls.Control;
 
 public class Page {
     private static final long TINY_TIMEOUT = 1;
-    private static final long SHORT_TIMEOUT = 5;
+    private static final long SHORT_TIMEOUT = 2;
     private static final int SCROLL_TOP_PART = 9;
     private static final int SCROLL_TOTAL_PARTS = 10;
     private static final long TIMEOUT = Configuration.timeout();
@@ -62,9 +74,13 @@ public class Page {
         return this;
     }
     public boolean isTextPresent(String text) {
-        String locator = String.format("//*[text()='%s' or contains(text(), %s)]", text, text);
+        String locator = String.format("//*[@text='%s' or contains(@text, '%s')]", text, text);
         Control element = new Control(this, By.xpath(locator));
         return element.exists();
+    }
+    public Page assertTextPresent(String text) {
+        Assertions.assertTrue(isTextPresent(text), "Unable to find text: '" + text + "'");
+        return this;
     }
     public byte[] captureScreenShot() throws IOException {
         WebDriver augmentedDriver = new Augmenter().augment(this.getDriver());
@@ -91,9 +107,10 @@ public class Page {
         String locator = "";
             locator = "//*[@text=\"" + message
                     + "\" or contains(@text,\"" + message
-                    + "\") or contains(text(),\"" + message
-                    + "\") or text()=\"" + message
-                    + "\" or contains(@content-desc,\"" + message
+//                    + "\")"
+//                    + " or contains(text(),\"" + message
+//                    + "\") or text()=\"" + message
+//                    + "\" or contains(@content-desc,\"" + message
                     + "\")]";
         text = new Control(this, By.xpath(locator));
         return text;
@@ -150,8 +167,12 @@ public class Page {
         int times = 0;
         final int maxTries = 50;
         while (!currentState.equals(prevState)) {
+        	
 //            ((AppiumDriver) this.getDriver()).swipe(startX, startY, endX, endY,
 //                    seconds * 1000);
+        	
+        	doSwipe(new Point(startX, startY), new Point(endX, endY));
+        	
             if (once || times > maxTries) {
                 break;
             }
@@ -162,6 +183,18 @@ public class Page {
         return true;
     }
 
+    private void doSwipe(Point start, Point end) {
+    	final var finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+    	var swipe = new Sequence(finger, 1);
+    	swipe.addAction(finger.createPointerMove(Duration.ofMillis(0),
+    	    PointerInput.Origin.viewport(), start.getX(), start.getY()));
+    	swipe.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
+    	swipe.addAction(finger.createPointerMove(Duration.ofMillis(1000),
+    	    PointerInput.Origin.viewport(), end.getX(), end.getY()));
+    	swipe.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+    	((RemoteWebDriver) this.getDriver()).perform(Arrays.asList(swipe));
+    }
+    
     public boolean scrollTo(Control control, boolean up) {
         if (control.exists(TINY_TIMEOUT)) {
             return true;
@@ -173,9 +206,12 @@ public class Page {
         String prevState = "";
         String currentState = this.getSource();
         while (!currentState.equals(prevState) && this.swipeScreen(true, up, true)) {
+        	System.out.println("Waiting for element: " + control.getLocatorText());
             if (control.exists(TINY_TIMEOUT)) {
+                System.out.println("Here!!!");
                 return true;
             }
+            System.out.println("Here!!!");
             prevState = currentState;
             currentState = this.getSource();
         }
@@ -213,11 +249,21 @@ public class Page {
         return scrollTo(text, ScrollTo.TOP_BOTTOM);
     }
     
-    public void hideKeyboard() {
+    public Page hideKeyboard() {
         try {
             // ((AppiumDriver) this.getDriver()).hideKeyboard();
+        	((HidesKeyboard) this.getDriver()).hideKeyboard();
         } catch (Exception e) {
         }
+        return this;
+    }
+    public <T extends Page> T hideKeyboard(Class<T> pageClass) {
+        try {
+            // ((AppiumDriver) this.getDriver()).hideKeyboard();
+        	((HidesKeyboard) this.getDriver()).hideKeyboard();
+        } catch (Exception e) {
+        }
+        return (T) this;
     }
     public boolean isCurrent(long timeout) throws Exception {
         Field[] fields = this.getClass().getFields();

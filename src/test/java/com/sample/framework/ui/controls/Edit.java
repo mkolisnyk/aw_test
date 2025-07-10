@@ -12,7 +12,7 @@ public class Edit extends Control {
         super(parentValue, locatorValue);
     }
 
-    public void setText(String value) throws Exception {
+    public Edit setText(String value) throws Exception {
         if (Configuration.platform().isAndroidNative()) {
             this.getParent().hideKeyboard();
         }
@@ -22,5 +22,6 @@ public class Edit extends Control {
         if (Configuration.platform().isAndroidNative()) {
             this.getParent().hideKeyboard();
         }
+        return this;
     }
 }

@@ -2,6 +2,7 @@ package com.sample.framework.ui.controls;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
 
 import com.sample.framework.ui.Page;

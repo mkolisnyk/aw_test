@@ -19,7 +19,7 @@ public class AppHelper {
 
     public static LoginPage startApp(boolean reset) throws Exception {
         Configuration.load();
-        Configuration.print();
+        // Configuration.print();
         DesiredCapabilities cap = new DesiredCapabilities();
         // cap.setCapability(CapabilityType.BROWSER_NAME, Configuration.get("browser"));
         // cap.setCapability("platformVersion", Configuration.get("platformVersion"));
@@ -30,9 +30,9 @@ public class AppHelper {
         // cap.setCapability("deviceName", Configuration.get("deviceName"));
         cap.setCapability("appium:commandTimeout", Configuration.get("commandTimeout"));
         //cap.setCapability("appActivity", Configuration.get("appActivity"));
-        //cap.setCapability("appPackage", Configuration.get("appPackage"));
+        cap.setCapability("appium:appPackage", Configuration.get("appPackage"));
         
-//        cap.setCapability("appWaitActivity", Configuration.get("appActivity"));
+        cap.setCapability("appium:appWaitActivity", "*");
 //        cap.setCapability("appWaitPackage", Configuration.get("appPackage"));
 //        
 

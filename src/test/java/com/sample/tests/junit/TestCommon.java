@@ -1,5 +1,6 @@
 package com.sample.tests.junit;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,10 +15,16 @@ public class TestCommon {
 	public TestCommon() {
 		// TODO Auto-generated constructor stub
 	}
+	
     @BeforeAll
     public static void beforeSuite() throws Exception {
-        AppHelper.uninstallApp();
+        // AppHelper.uninstallApp();
         // process = SystemUtils.startProcessMetricsCommand(new File("output.txt"));
+    }
+    @AfterAll
+    public static void afterSuite() {
+    	System.out.println("Final Quit!!!");
+    	AppHelper.stopApp();
     }
     public void setUp(boolean reset) throws Exception {
         this.pageLogin = AppHelper.startApp(reset);
@@ -28,6 +35,7 @@ public class TestCommon {
 	}
 	@AfterEach
 	public void tearDown() {
+		System.out.println("Quit!!!");
 		AppHelper.stopApp();
 		// TestCommon.process.destroy();
 	}

@@ -10,6 +10,7 @@ import org.openqa.selenium.Point;
 import org.openqa.selenium.Rectangle;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -38,12 +39,16 @@ public class Control {
         this.locator = locatorValue;
         this.locatorText = this.locator.toString().replaceFirst("^By\\.(\\S+): ", "");
         subItemsMap = new HashMap<String, SubItem>();
+        System.out.println(String.format("New Control with locator: %s", this.locatorText));
     }
     public WebDriver getDriver() {
         return parent.getDriver();
     }
     public Page getParent() {
 		return parent;
+	}
+    public <T extends Page> T getParent(Class<T> pageClass) {
+		return (T) parent;
 	}
 	public By getLocator() {
 		return locator;
@@ -110,8 +115,12 @@ public class Control {
         return true;
     }
     public boolean exists(long timeout) {
-        this.scrollTo();
-        return waitUntil(ExpectedConditions.presenceOfElementLocated(locator), timeout);
+    	try {
+	        this.scrollTo();
+	        return waitUntil(ExpectedConditions.presenceOfElementLocated(locator), timeout);
+    	} catch (WebDriverException e) {
+    		return false;
+    	}
     }
     public boolean exists() {
         return exists(TIMEOUT);
@@ -174,6 +183,10 @@ public class Control {
 				"Unable to find element with locator: " + this.getLocator()
 				);
 		return this.element().getText();
+    }
+    public Control assertText(String expected) {
+    	Assertions.assertEquals(expected, getText(), "Element has unexpected text");
+    	return this;
     }
     public String getValue() {
         return this.getText();
