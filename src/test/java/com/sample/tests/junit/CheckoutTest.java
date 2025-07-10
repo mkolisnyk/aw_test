@@ -1,6 +1,6 @@
 package com.sample.tests.junit;
 
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.sample.tests.pages.CartPage;
@@ -12,6 +12,11 @@ import com.sample.tests.pages.ProductsPage;
 
 public class CheckoutTest extends TestCommon {
 
+	private final String checkoutFirstName = "Test";
+	private final String checkoutLastName = "User";
+	private final String checkoutZipCode = "W6 9NT";
+
+	@DisplayName("Complete checkout flow for standard user buying single product should complete successfully")
 	@Test
 	public void testStandardUserBasicCheckout() throws Exception {
 		this.pageLogin.login()
@@ -22,15 +27,13 @@ public class CheckoutTest extends TestCommon {
 			.getParent(ProductsPage.class)
 			.buttonCart.click(CartPage.class)
 			.buttonCheckout.click(CheckOutPage.class)
-			.editFirstName.setText("Test").getParent(CheckOutPage.class)
-			.editLastName.setText("User").getParent(CheckOutPage.class)
-			.editZipCode.setText("W6 9NT").getParent(CheckOutPage.class)
-			.hideKeyboard(CheckOutPage.class)
+			.fillFormData(checkoutFirstName, checkoutLastName, checkoutZipCode)
 			.buttonContinue.click(CheckOutOverviewPage.class)
 			.buttonFinish.click(CheckOutCompletePage.class)
 			.buttonBackHome.click(ProductsPage.class);
 	}
-	
+
+	@DisplayName("Complete checkout flow for standard user buying multiple products should complete successfully")
 	@Test
 	public void testStandardUserMultipleCheckout() throws Exception {
 		this.pageLogin.login()
@@ -39,15 +42,13 @@ public class CheckoutTest extends TestCommon {
 			.selectProduct("Sauce Labs Onesie")
 			.buttonCart.click(CartPage.class)
 			.buttonCheckout.click(CheckOutPage.class)
-			.editFirstName.setText("Test").getParent(CheckOutPage.class)
-			.editLastName.setText("User").getParent(CheckOutPage.class)
-			.editZipCode.setText("W6 9NT").getParent(CheckOutPage.class)
-			.hideKeyboard(CheckOutPage.class)
+			.fillFormData(checkoutFirstName, checkoutLastName, checkoutZipCode)
 			.buttonContinue.click(CheckOutOverviewPage.class)
 			.buttonFinish.click(CheckOutCompletePage.class)
 			.buttonBackHome.click(ProductsPage.class);
 	}
-	
+
+	@DisplayName("Standard user should go back to products page from the checkout")
 	@Test
 	public void testStandardUserBackNavigation() throws Exception {
 		this.pageLogin.login()
@@ -58,13 +59,11 @@ public class CheckoutTest extends TestCommon {
 			.getParent(ProductsPage.class)
 			.buttonCart.click(CartPage.class)
 			.buttonCheckout.click(CheckOutPage.class)
-			.editFirstName.setText("Test").getParent(CheckOutPage.class)
-			.editLastName.setText("User").getParent(CheckOutPage.class)
-			.editZipCode.setText("W6 9NT").getParent(CheckOutPage.class)
-			.hideKeyboard(CheckOutPage.class)
+			.fillFormData(checkoutFirstName, checkoutLastName, checkoutZipCode)
 			.buttonCancel.click(ProductsPage.class);
 	}
-	
+
+	@DisplayName("Complete checkout flow for problem user buying single product should complete successfully")
 	@Test
 	public void testProblemUserBasicCheckout() throws Exception {
 		this.pageLogin.login(LoginPage.PROBLEM_USER, LoginPage.PASSWORD, ProductsPage.class)
@@ -75,10 +74,7 @@ public class CheckoutTest extends TestCommon {
 			.getParent(ProductsPage.class)
 			.buttonCart.click(CartPage.class)
 			.buttonCheckout.click(CheckOutPage.class)
-			.editFirstName.setText("Test").getParent(CheckOutPage.class)
-			.editLastName.setText("User").getParent(CheckOutPage.class)
-			.editZipCode.setText("W6 9NT").getParent(CheckOutPage.class)
-			.hideKeyboard(CheckOutPage.class)
+			.fillFormData(checkoutFirstName, checkoutLastName, checkoutZipCode)
 			.buttonContinue.click(CheckOutOverviewPage.class)
 			.buttonFinish.click(CheckOutCompletePage.class)
 			.buttonBackHome.click(ProductsPage.class);

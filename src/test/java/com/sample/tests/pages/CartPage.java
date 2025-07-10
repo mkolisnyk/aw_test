@@ -24,8 +24,5 @@ public class CartPage extends Page {
 	
 	public CartPage(WebDriver driverValue) {
 		super(driverValue);
-		// TODO Auto-generated constructor stub
 	}
-
-	
 }

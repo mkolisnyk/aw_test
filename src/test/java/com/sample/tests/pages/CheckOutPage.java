@@ -29,4 +29,10 @@ public class CheckOutPage extends Page {
 		// TODO Auto-generated constructor stub
 	}
 
+	public CheckOutPage fillFormData(String firstName, String lastName, String zipCode) throws Exception {
+		editFirstName.setText(firstName);
+		editLastName.setText(lastName);
+		editZipCode.setText(zipCode);
+		return hideKeyboard(CheckOutPage.class);
+	}
 }

@@ -1,19 +1,16 @@
 package com.sample.tests.helpers;
 
-import java.io.File;
-import java.io.IOException;
-import java.time.Duration;
-import java.util.concurrent.TimeUnit;
-
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.remote.CapabilityType;
-import org.openqa.selenium.remote.DesiredCapabilities;
-
 import com.sample.framework.Configuration;
 import com.sample.framework.Driver;
 import com.sample.framework.ui.PageFactory;
 import com.sample.framework.utils.SystemUtils;
 import com.sample.tests.pages.LoginPage;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
+
+import java.io.File;
+import java.io.IOException;
+import java.time.Duration;
 
 public class AppHelper {
 
@@ -26,7 +23,9 @@ public class AppHelper {
         cap.setCapability("platformName", "Android");
         cap.setCapability("appium:automationName", "UiAutomator2");
         cap.setCapability("appium:app", new File(Configuration.get("app_path")).getAbsolutePath());
-        // cap.setCapability("udid", Configuration.get("udid"));
+        if (!Configuration.get("udid").isBlank()) {
+            cap.setCapability("udid", Configuration.get("udid"));
+        }
         // cap.setCapability("deviceName", Configuration.get("deviceName"));
         cap.setCapability("appium:commandTimeout", Configuration.get("commandTimeout"));
         //cap.setCapability("appActivity", Configuration.get("appActivity"));
