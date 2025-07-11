@@ -8,18 +8,6 @@ releases/download/2.7.1/Android.SauceLabs.Mobile.Sample.app.2.7.1.apk).
 
 It includes the core framework as well as several sample tests implementation.
 
-## Assumptions and restrictions
-
-Due to time and resources constraints current solution has limited capabilities, but it can be extended.
-
-The following is the list of assumptions and restrictions:
-1. The solution is implemented for the Android app version, however, the framework itself reserves the possibility to add iOS support. 
-2. Tests were developed and tested on real device. Base emulators support is not included, however, emulators like [Genymotion](https://www.genymotion.com/) can work the same way.
-3. Test device should be connected via USB (or any other way it's visible by ADB) and should be of single instance, however, multiple device support is included
-4. Due to lack of time and resources, the solution was tested just on a few devices
-5. Since the solution is isolated from app development repository, it is assumed that application package is stored in the project root directory (it is provided together with the code), however, it still can be configured.
-6. Due to time and resources constraints, the solution assumes local instance of Appium up and running. Remote locations and cloud solutions were not covered, however, their support is about some updates in capabilities. Currently, it uses default port, but it reserves possibility to re-configure it (see Configuration section)
-
 ## Tech Stack
 
 This sample covers Android application version, however, the framework can be extended to support iOS version as well.
